@@ -1,7 +1,8 @@
 "use client";
 
 import { Box, Button, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect,useRef } from "react";
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -64,6 +65,18 @@ export default function Home() {
       sendMessage();
     }
   };
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const matches = useMediaQuery("(min-width:600px)");
+
   return (
     <Box //holds everything
       width="100vw"
@@ -131,9 +144,18 @@ export default function Home() {
             fullWidth
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
           />
-          <Button variant="contained" onClick={sendMessage}>
-            Send
+          <Button
+            variant="contained"
+            onClick={sendMessage}
+            style={{
+              backgroundColor: "#423E28",
+            }}
+            disabled={isLoading}
+          >
+            {isLoading ? "Sending..." : "Send"}
           </Button>
         </Stack>
       </Stack>
